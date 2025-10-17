@@ -2,55 +2,62 @@ package main;
 
 import domain.Team;
 import domain.car.Car;
-import domain.car.Chassis;
-import domain.car.Engine;
 import domain.members.Driver;
-import domain.members.Engineer;
+import domain.members.TeamMember;
 import exceptions.BudgetExceededException;
+import exceptions.InvalidTeamCompositionException;
+import patterns.controller.RaceSimulator;
+import patterns.creational.abstract_factory.CarPartFactory;
+import patterns.creational.abstract_factory.HighPerformancePartFactory;
+import patterns.creational.factory_method.TeamMemberFactory;
+import patterns.creational.singleton.RaceCalendar;
 
 public class Main {
     public static void main(String[] args) {
         System.out.println("     FORMULA 1 TEAM     ");
 
-        // Створюємо об'єкти напряму, без патернів
-        Team myTeam = new Team("Red Bull", 100_000_000);
+        // Використовуємо патерни для створення об'єктів
+        TeamMemberFactory memberFactory = new TeamMemberFactory();
         Driver driver1 = new Driver("Nazar", 5, 97);
         Driver driver2 = new Driver("Ivan", 1, 80);
-        Engineer engineer = new Engineer("Danya", 10, "Aerodynamics");
-
-        // Створюємо компоненти боліда
-        Engine engine = new Engine("HP-V8", 950);
-        Chassis chassis = new Chassis("HPC-01", 4.5);
-        Car car = new Car(engine, chassis);
-
-        // Демонструємо, що об'єкти створено
-        System.out.println("Team created: " + myTeam.getName());
+        Driver driver3 = new Driver("Sasha", 2, 85);
 
 
-        // Тепер ми обробляємо можливі помилки
-        try {
-            System.out.println("\nAttempting to hire drivers...");
-            myTeam.hireDriver(driver1, 50_000_000);
+        CarPartFactory carFactory = new HighPerformancePartFactory();
+        Car car = new Car(carFactory.createEngine(), carFactory.createChassis());
 
-            // Ця спроба має провалитися і викликати виключення
-            System.out.println("Attempting to hire a second driver...");
-            myTeam.hireDriver(driver2, 60_000_000);
+        Team myTeam = new Team("Red Bull", 100_000_000);
+        myTeam.setCar(car);
+        System.out.println("The team has chosen the car configuration: High Performance.");
+        System.out.println(car + "\n");
 
-            System.out.println("This line will not be reached.");
-
+        // Тут спрацює виключення на бюджет
+        /**try {
+            myTeam.hireDriver((Driver) driver1, 50_000_000);
+            myTeam.hireDriver((Driver) driver2, 60_000_000);
         } catch (BudgetExceededException e) {
-            // "Ловимо" помилку і виводимо її повідомлення
-            System.err.println("OPERATION FAILED: " + e.getMessage());
+            System.err.println("Setup Error: " + e.getMessage());
+            return;
+        }**/
+
+        try {
+            myTeam.hireDriver((Driver) driver1, 50_000_000);
+            myTeam.hireDriver((Driver) driver3, 30_000_000);
+        } catch (BudgetExceededException e) {
+            System.err.println("Setup Error: " + e.getMessage());
+            return;
         }
 
-        System.out.println("\nHired driver: " + driver1.getName());
-        myTeam.setCar(car);
-        System.out.println("Car performance: " + car.getOverallPerformance());
+        RaceCalendar.getInstance().printCalendar();
 
-        // Демонструємо поліморфізм
-        System.out.println("\n--- Team daily tasks ---");
-        driver1.performTask();
-        engineer.performTask();
+        // Створюємо контролер і передаємо йому керування
+        RaceSimulator simulator = new RaceSimulator();
+        try {
+            simulator.startRace(myTeam);
+        } catch (InvalidTeamCompositionException e) {
+            System.err.println("Simulation Error: " + e.getMessage());
+        }
 
+        System.out.println("\nApplication finished.");
     }
 }

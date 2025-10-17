@@ -3,6 +3,7 @@ package domain;
 import domain.car.Car;
 import domain.members.Driver;
 import domain.members.Engineer;
+import exceptions.BudgetExceededException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +23,10 @@ public class Team {
         this.budget = budget;
     }
 
-    public void hireDriver(Driver driver, double salary) {
+    public void hireDriver(Driver driver, double salary) throws BudgetExceededException {
+        if (budget < salary) {
+            throw new BudgetExceededException("Not enough budget to hire driver " + driver.getName());
+        }
         this.budget -= salary;
         this.drivers.add(driver);
         System.out.printf("Hired driver %s. Remaining budget: %.2f\n", driver.getName(), budget);

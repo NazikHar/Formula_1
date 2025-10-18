@@ -3,7 +3,7 @@ package main;
 import domain.Team;
 import domain.car.Car;
 import domain.members.Driver;
-import domain.members.TeamMember;
+import domain.members.Engineer;
 import exceptions.BudgetExceededException;
 import exceptions.InvalidTeamCompositionException;
 import patterns.controller.RaceSimulator;
@@ -18,9 +18,11 @@ public class Main {
 
         // Використовуємо патерни для створення об'єктів
         TeamMemberFactory memberFactory = new TeamMemberFactory();
-        Driver driver1 = new Driver("Nazar", 5, 97);
-        Driver driver2 = new Driver("Ivan", 1, 80);
-        Driver driver3 = new Driver("Sasha", 2, 85);
+        Driver driver1 = (Driver) memberFactory.createTeamMember("driver", "Nazar", 5, 97);
+        // Driver driver2 = (Driver) memberFactory.createTeamMember("driver", "Ivan", 1, 80);
+        Driver driver3 = (Driver) memberFactory.createTeamMember("driver", "Sasha", 2, 85);
+
+        Engineer chiefEngineer = (Engineer) memberFactory.createTeamMember("engineer", "Danya", 30, "Aerodynamics");
 
 
         CarPartFactory carFactory = new HighPerformancePartFactory();
@@ -43,6 +45,8 @@ public class Main {
         try {
             myTeam.hireDriver((Driver) driver1, 50_000_000);
             myTeam.hireDriver((Driver) driver3, 30_000_000);
+
+            myTeam.hireEngineer(chiefEngineer, 10_000_000);
         } catch (BudgetExceededException e) {
             System.err.println("Setup Error: " + e.getMessage());
             return;

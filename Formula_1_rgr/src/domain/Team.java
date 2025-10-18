@@ -9,8 +9,6 @@ import java.util.List;
 
 // клас об'єднує та керує всі іншимі сутності: пілоти, інженери та болід
 
-// GRASP: Creator. Клас Team створює об'єкти Car та Driver, оскільки він їх агрегує.
-
 public class Team {
     private String name;
     private double budget;
@@ -30,6 +28,15 @@ public class Team {
         this.budget -= salary;
         this.drivers.add(driver);
         System.out.printf("Hired driver %s. Remaining budget: %.2f\n", driver.getName(), budget);
+    }
+
+    public void hireEngineer(Engineer engineer, double salary) throws BudgetExceededException {
+        if (budget < salary) {
+            throw new BudgetExceededException("Not enough budget to hire engineer " + engineer.getName());
+        }
+        this.budget -= salary;
+        this.engineers.add(engineer);
+        System.out.printf("Hired engineer %s (%s). Remaining budget: %.2f\n", engineer.getName(), engineer.getSpecialization(), budget);
     }
 
     public void setCar(Car car) {

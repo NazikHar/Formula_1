@@ -26,7 +26,15 @@ public class Main {
 
 
         CarPartFactory carFactory = new HighPerformancePartFactory();
-        Car car = new Car(carFactory.createEngine(), carFactory.createChassis());
+
+        domain.car.Engine myEngine = carFactory.createEngine();
+        domain.car.Chassis myChassis = carFactory.createChassis();
+        System.out.println("\n!!! SABOTAGE: Damaging the engine before the race !!!");
+        //myEngine.setCondition(15.0); Приклад пошкодженної деталі
+        myEngine.setCondition(65.0);
+
+        // 3. Збираємо машину вже з пошкодженим двигуном
+        Car car = new Car(myEngine, myChassis);
 
         Team myTeam = new Team("Red Bull", 100_000_000);
         myTeam.setCar(car);

@@ -54,6 +54,8 @@ public class Team {
         }
     }
 
+    public Car getCar() { return car; }
+
     public String getName() {
         return name;
     }

@@ -11,6 +11,10 @@ import patterns.creational.abstract_factory.CarPartFactory;
 import patterns.creational.abstract_factory.HighPerformancePartFactory;
 import patterns.creational.factory_method.TeamMemberFactory;
 import patterns.creational.singleton.RaceCalendar;
+import patterns.structural.adapter.EngineAdapter;
+import patterns.structural.adapter.TurboEngine3000;
+import patterns.structural.decorator.AerodynamicUpgrade;
+import patterns.behavioral.observer.RaceControl;
 
 public class Main {
     public static void main(String[] args) {
@@ -24,13 +28,21 @@ public class Main {
 
         Engineer chiefEngineer = (Engineer) memberFactory.createTeamMember("engineer", "Danya", 30, "Aerodynamics");
 
-
         CarPartFactory carFactory = new HighPerformancePartFactory();
 
-        domain.car.Engine myEngine = carFactory.createEngine();
-        domain.car.Chassis myChassis = carFactory.createChassis();
+        // [ПАТЕРН ADAPTER]
+        // Замість звичайного двигуна адаптуємо сторонній "TurboEngine3000"
+        System.out.println("\n--- Installing Adapter ---");
+        TurboEngine3000 alienEngine = new TurboEngine3000();
+        domain.car.Engine myEngine = new EngineAdapter(alienEngine);
+
+        // [ПАТЕРН DECORATOR]
+        // Створюємо звичайне шасі, а потім "огортаємо" його в покращення
+        System.out.println("--- Applying Decorator ---");
+        domain.car.Chassis baseChassis = carFactory.createChassis();
+        domain.car.Chassis myChassis = new AerodynamicUpgrade(baseChassis);
+
         System.out.println("\n!!! SABOTAGE: Damaging the engine before the race !!!");
-        //myEngine.setCondition(15.0); Приклад пошкодженної деталі
         myEngine.setCondition(65.0);
 
         // 3. Збираємо машину вже з пошкодженим двигуном
@@ -59,6 +71,22 @@ public class Main {
             System.err.println("Setup Error: " + e.getMessage());
             return;
         }
+
+        System.out.println("\n--- TESTING STRATEGY PATTERN ---");
+
+        driver1.setStrategy(new patterns.behavioral.strategy.AggressiveStrategy());
+        driver1.driveRace(myTeam.getCar());
+
+        // 2. Міняємо на спокійну стратегію (прямо під час виконання програми!)
+        System.out.println("\n...Changing strategy due to rain...");
+        driver1.setStrategy(new patterns.behavioral.strategy.ConservativeStrategy());
+        driver1.driveRace(myTeam.getCar());
+
+        // [ПАТЕРН OBSERVER]
+        System.out.println("\n--- TESTING OBSERVER PATTERN ---");
+        RaceControl raceControl = new RaceControl();
+        raceControl.addObserver(myTeam); // Підписуємо команду на новини
+        raceControl.broadcastMessage("Attention teams: Yellow flag in Sector 2!");
 
         RaceCalendar.getInstance().printCalendar();
 

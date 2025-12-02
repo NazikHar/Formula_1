@@ -7,6 +7,7 @@ import exceptions.ComponentFailureException;
 public class Car {
     private Engine engine;
     private Chassis chassis;
+    public Engine getEngine() { return engine; }
 
     public Car(Engine engine, Chassis chassis) {
         this.engine = engine;

@@ -6,10 +6,11 @@ import domain.members.Engineer;
 import exceptions.BudgetExceededException;
 import java.util.ArrayList;
 import java.util.List;
+import patterns.behavioral.observer.RaceObserver;
 
 // клас об'єднує та керує всі іншимі сутності: пілоти, інженери та болід
 
-public class Team {
+public class Team implements RaceObserver{
     private String name;
     private double budget;
     private List<Driver> drivers = new ArrayList<>();
@@ -58,5 +59,10 @@ public class Team {
 
     public String getName() {
         return name;
+    }
+
+    @Override
+    public void update(String message) {
+        System.out.println("Team " + name + " received radio message: " + message);
     }
 }

@@ -44,6 +44,7 @@ public class Main {
 
         System.out.println("\n!!! SABOTAGE: Damaging the engine before the race !!!");
         myEngine.setCondition(65.0);
+        //myEngine.setCondition(15.0);
 
         // 3. Збираємо машину вже з пошкодженим двигуном
         Car car = new Car(myEngine, myChassis);

@@ -2,10 +2,12 @@ package domain.car;
 
 import exceptions.ComponentFailureException;
 
-// Клас який дає працювати далі з всіма компонентами як одним ціоим
-// (Компоненти юудуть ще додаватись)
+// Клас який дає працювати далі з всіма компонентами як одним цілим
 
 public abstract class CarComponent {
+    // [РЕФАКТОРИНГ] 1. Створюємо іменовану константу замість "магічного числа" 20.0
+    private static final double CRITICAL_THRESHOLD = 20.0;
+
     private String id;
     protected double condition = 100.0; // Стан компоненту
 
@@ -17,9 +19,10 @@ public abstract class CarComponent {
         return condition;
     }
 
-    public void checkStatus() throws exceptions.ComponentFailureException {
-        if (getCondition() < 20.0) {
-            throw new exceptions.ComponentFailureException("Component " + id + " FAILED! Condition is critical: " + getCondition() + "%");
+    public void checkStatus() throws ComponentFailureException {
+        // [РЕФАКТОРИНГ] 2. Використовуємо зрозумілу назву замість просто числа
+        if (getCondition() < CRITICAL_THRESHOLD) {
+            throw new ComponentFailureException("Component " + id + " FAILED! Condition is critical: " + getCondition() + "%");
         }
     }
 
